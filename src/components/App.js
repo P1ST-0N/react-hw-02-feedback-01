@@ -1,5 +1,7 @@
 import { Component } from "react";
 import FeedBackOptions from "./FeedBackOptions/FeedBackOptions";
+import { Statistics } from "./Statistics/Statistics";
+import { Notification } from "./Notification/Notification";
 
 import { Wrapper, Section, Title } from "./Feedback.styled";
 
@@ -21,28 +23,44 @@ export class App extends Component {
       ? Math.round((this.state.good / total) * 100)
       : 0;
     return positivPercentage;
-  }
+  };
+
+  onLeaveFeedback = e => {
+    this.setState(prevState => {
+      return {[e.target.name]: prevState[e.target.name] + 1};
+    });
+  };
 
   render() {
-    // const total = this.countTotalFeedback();
-    // const {good, neutral, bad} = this.state;
+    const total = this.countTotalFeedback();
+    const { good, neutral, bad } = this.state;
     const feedback = Object.keys(this.state);
-    // const positivPerc = this.countPositiveFeedbackPercentage();
+    const positivePerc = this.countPositiveFeedbackPercentage();
 
     return (
       <>
         <Title>Feedback book</Title>
         <Wrapper>
+          <Title>Please leave a feedback</Title>
           <Section>
             <FeedBackOptions
               options={feedback}
               onLeaveFeedback={this.onLeaveFeedback}
             />
           </Section>
-
-          <Section>
-            dgdsfg
-          </Section>
+          {!total ? (
+            <Notification message="There is no feedback" />
+          ) : (
+            <Section>
+              <Statistics
+                good={good}
+                neutral={neutral}
+                bad={bad}
+                total={total}
+                positivePercentage={positivePerc}
+              />
+            </Section>
+          )}
         </Wrapper>
       </>
     );
